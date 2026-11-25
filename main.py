@@ -1,8 +1,3 @@
-"""Run every trade in trades_test.csv through the checker.
-
-Usage:  python main.py [trades.csv] [portfolios.json]
-Writes results.csv and prints a table.
-"""
 import csv
 import json
 import sys
