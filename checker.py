@@ -1,9 +1,3 @@
-"""Portfolio Trade Order Compliance & Execution Checker.
-
-Core logic: check_trade(trade, portfolios) -> {"decision": ..., "reason": ...}
-Rules run in order; the first failing rule decides the outcome.
-All money maths uses Decimal so "exactly equal" comparisons are reliable.
-"""
 from decimal import Decimal, InvalidOperation
 
 APPROVED = "Approved"
@@ -29,7 +23,7 @@ def _result(decision, reason):
 
 
 def check_trade(trade, portfolios):
-    # ---- Step 1: validate -------------------------------------------------
+    # validate 
     qty = to_decimal(trade.get("quantity"))
     price = to_decimal(trade.get("price"))
     action = VALID_ACTIONS.get(str(trade.get("action", "")).strip().lower())
@@ -37,7 +31,7 @@ def check_trade(trade, portfolios):
     if qty is None or price is None or qty <= 0 or price <= 0 or action is None:
         return _result(REJECTED, "Invalid trade data.")
 
-    # Assumption (not in the spec): an unknown portfolio can't be checked.
+    #  unknown portfolio can't be checked.
     portfolio = portfolios.get(trade.get("portfolio_id"))
     if portfolio is None:
         return _result(REJECTED, "Unknown portfolio.")
@@ -50,24 +44,24 @@ def check_trade(trade, portfolios):
         for h in portfolio["current_holdings"]
     }
 
-    # ---- Step 2: restricted security -------------------------------------
+    # restricted security
     if security_id in portfolio["restricted_securities"]:
         return _result(REJECTED, "Security is restricted for this portfolio.")
 
     existing_qty = holdings.get(security_id, (Decimal(0), None))[0]
 
-    # ---- Step 3: sell check ----------------------------------------------
+    # sell check
     if action == "Sell":
         if existing_qty < qty:  # exactly equal is fine
             return _result(REJECTED, "Insufficient holdings to sell.")
         return _result(APPROVED, "Trade passed all checks.")
 
-    # ---- Step 4: buy affordability ---------------------------------------
+    # buy affordability
     cost = qty * price
     if cost > cash:  # exactly equal is fine
         return _result(REJECTED, "Insufficient cash for this buy order.")
 
-    # ---- Step 5: position concentration (buy only) -----------------------
+    # buy only
     post_trade_cash = cash - cost
     this_value = (existing_qty + qty) * price  # trade price = market price
     other_value = sum(
@@ -75,15 +69,14 @@ def check_trade(trade, portfolios):
         Decimal(0),
     )
     total_after = post_trade_cash + this_value + other_value
-    if total_after <= 0:  # safety guard against division by zero
+    if total_after <= 0:  
         return _result(MANUAL, "Portfolio value is zero — requires approval.")
 
     position_pct = this_value / total_after
-    if position_pct > max_pct:  # exactly at the cap is fine
+    if position_pct > max_pct: 
         return _result(
             MANUAL,
             "Exceeds maximum position concentration — requires approval.",
         )
 
-    # ---- Step 6 ----------------------------------------------------------
     return _result(APPROVED, "Trade passed all checks.")
