@@ -1,0 +1,47 @@
+{
+  "_note": "SAMPLE DATA - the task zip did not include portfolio reference data. Replace with the official data if you receive it.",
+  "POR001": {
+    "cash_balance": 50000,
+    "restricted_securities": ["XYZCORP"],
+    "max_position_pct": 0.25,
+    "current_holdings": [
+      {"security_id": "AAPL", "quantity": 100, "market_price": 150},
+      {"security_id": "TCS",  "quantity": 50,  "market_price": 310},
+      {"security_id": "INFY", "quantity": 10,  "market_price": 1500}
+    ]
+  },
+  "POR002": {
+    "cash_balance": 10000,
+    "restricted_securities": [],
+    "max_position_pct": 0.20,
+    "current_holdings": [
+      {"security_id": "MSFT", "quantity": 100, "market_price": 400}
+    ]
+  },
+  "POR003": {
+    "cash_balance": 60000,
+    "restricted_securities": ["BADCO"],
+    "max_position_pct": 0.30,
+    "current_holdings": [
+      {"security_id": "RELIANCE", "quantity": 30, "market_price": 2400}
+    ]
+  },
+  "POR004": {
+    "cash_balance": 30000,
+    "restricted_securities": [],
+    "max_position_pct": 0.40,
+    "current_holdings": [
+      {"security_id": "TCS",   "quantity": 40, "market_price": 300},
+      {"security_id": "GOOGL", "quantity": 5,  "market_price": 2000}
+    ]
+  },
+  "POR005": {
+    "cash_balance": 40000,
+    "restricted_securities": ["PENNY1"],
+    "max_position_pct": 0.10,
+    "current_holdings": [
+      {"security_id": "TCS",  "quantity": 10, "market_price": 250},
+      {"security_id": "INFY", "quantity": 4,  "market_price": 1750}
+    ]
+  }
+}
